@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Trocar Senha - SIP{% endblock %}
+{% block content %}
+<h2 style="text-align:center; margin-bottom: 30px;">Trocar Senha</h2>
+
+<form method="POST" style="max-width: 500px; margin: auto; background: #f1f3f5; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    {{ form.hidden_tag() }}
+
+    <div style="margin-bottom: 20px;">
+        <label for="email">E-mail</label>
+        {{ form.email(class_="form-control", style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;") }}
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label for="senha_atual">Senha Atual</label>
+        {{ form.senha_atual(class_="form-control", style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;") }}
+    </div>
+
+    <div style="margin-bottom: 20px;">
+        <label for="nova_senha">Nova Senha</label>
+        {{ form.nova_senha(class_="form-control", style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;") }}
+    </div>
+
+    <div>
+        {{ form.submit(class_="btn btn-primary", style="width:100%; padding:10px; background-color:#2980b9; color:white; border:none; border-radius:6px; cursor:pointer;") }}
+    </div>
+
+    <div style="text-align:center; margin-top:15px;">
+        <a href="{{ url_for('login') }}">Voltar para o login</a>
+    </div>
+</form>
+{% endblock %}

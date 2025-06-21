@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    h2 {
+        color: #2c3e50;
+        margin-top: 30px;
+    }
+
+    form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 1100px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        margin: 20px auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+    select, textarea, input[type="text"], input[type="file"], input[type="date"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+
+    input[type="submit"], button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    input[type="submit"]:hover, button:hover {
+        background-color: #2980b9;
+    }
+
+    .subsection {
+        grid-column: 1 / -1;
+        margin-top: 30px;
+        font-size: 16px;
+        color: #555;
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+    }
+</style>
+
+<h2>Registrar Novo Processo</h2>
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    <div>
+        <label>{{ form.colaborador.label }}</label>
+        {{ form.colaborador() }}
+    </div>
+    <div>
+        <label>{{ form.status.label }}</label>
+        {{ form.status() }}
+    </div>
+
+    <div class="full">
+        <label>{{ form.descricao.label }}</label>
+        {{ form.descricao(rows=2) }}
+    </div>
+
+    <div class="full">
+        <label>{{ form.observacoes.label }}</label>
+        {{ form.observacoes(rows=2) }}
+    </div>
+
+    <div class="full">
+        <label>{{ form.imagem.label }}</label>
+        {{ form.imagem() }}
+    </div>
+
+    <div class="subsection">Informações Detalhadas (para exportação)</div>
+
+    <div>
+        <label>{{ form.coordenacao.label }}</label>
+        {{ form.coordenacao() }}
+    </div>
+    <div>
+        <label>{{ form.lideranca.label }}</label>
+        {{ form.lideranca() }}
+    </div>
+
+    <div>
+        <label>{{ form.data_inspecao.label }}</label>
+        {{ form.data_inspecao() }}
+    </div>
+    <div>
+        <label>{{ form.inspetor.label }}</label>
+        {{ form.inspetor() }}
+    </div>
+
+    <div>
+        <label>{{ form.cpf_cnpj.label }}</label>
+        {{ form.cpf_cnpj() }}
+    </div>
+    <div>
+        <label>{{ form.coop.label }}</label>
+        {{ form.coop() }}
+    </div>
+
+    <div>
+        <label>{{ form.tipo.label }}</label>
+        {{ form.tipo() }}
+    </div>
+    <div>
+        <label>{{ form.data_execucao.label }}</label>
+        {{ form.data_execucao() }}
+    </div>
+
+    <div>
+        <label>{{ form.interno_externo.label }}</label>
+        {{ form.interno_externo() }}
+    </div>
+    <div>
+        <label>{{ form.tipo_autorizacao.label }}</label>
+        {{ form.tipo_autorizacao() }}
+    </div>
+
+    <div>
+        <label>{{ form.tipo_erro.label }}</label>
+        {{ form.tipo_erro() }}
+    </div>
+    <div>
+        <label>{{ form.gravidade.label }}</label>
+        {{ form.gravidade() }}
+    </div>
+
+    <div>
+        <label>{{ form.desvio_atencao.label }}</label>
+        {{ form.desvio_atencao() }}
+    </div>
+    <div>
+        <label>{{ form.reversao.label }}</label>
+        {{ form.reversao() }}
+    </div>
+
+    <div class="full">
+        <label>{{ form.fluxos.label }}</label>
+        {{ form.fluxos() }}
+    </div>
+
+    <div class="full">
+        <label>{{ form.solicitante.label }}</label>
+        {{ form.solicitante() }}
+    </div>
+
+    <div class="full">
+        {{ form.submit() }}
+    </div>
+</form>
+{% endblock %}

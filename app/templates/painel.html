@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    form.filtros {
+        margin-bottom: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-end;
+    }
+
+    form.filtros label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    form.filtros input,
+    form.filtros select {
+        padding: 6px 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 6px 12px;
+        background-color: #3498db;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #2c3e50;
+    }
+
+    h2 {
+        color: #2c3e50;
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: sans-serif;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f4f6f9;
+        color: #333;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 20px 0;
+    }
+
+    .pagination li {
+        margin: 0 5px;
+    }
+
+    .pagination a, .pagination span {
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #3498db;
+    }
+
+    .pagination .disabled span {
+        color: #999;
+        border-color: #eee;
+    }
+
+    .pagination .active span {
+        background-color: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+</style>
+
+<h2>Painel de Inspeções</h2>
+
+<form method="get" class="filtros">
+    <div>
+        <label for="colaborador">Colaborador</label>
+        <select name="colaborador">
+            <option value="">Todos</option>
+            {% for c in colaboradores %}
+                <option value="{{ c.id }}" {% if c.id == colaborador_id %}selected{% endif %}>{{ c.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label for="status">Status</label>
+        <select name="status">
+            <option value="">Todos</option>
+            <option value="Conforme" {% if request.args.get('status') == 'Conforme' %}selected{% endif %}>Conforme</option>
+            <option value="Desvio" {% if request.args.get('status') == 'Desvio' %}selected{% endif %}>Desvio</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="data_inicio">Data Início</label>
+        <input type="date" name="data_inicio" value="{{ request.args.get('data_inicio', '') }}">
+    </div>
+
+    <div>
+        <label for="data_fim">Data Fim</label>
+        <input type="date" name="data_fim" value="{{ request.args.get('data_fim', '') }}">
+    </div>
+
+    <div>
+        <label for="palavra">Palavra-chave</label>
+        <input type="text" name="palavra" placeholder="Descrição..." value="{{ request.args.get('palavra', '') }}">
+    </div>
+
+    <div>
+        <button type="submit">Filtrar</button>
+    </div>
+</form>
+
+<h3>Resumo</h3>
+<p>Total de processos: <strong>{{ total }}</strong></p>
+<p>Conformes:  <strong>{{ conformes }}</strong></p>
+<p>Desvios: <strong>{{ desvios }}</strong></p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Colaborador</th>
+            <th>Status</th>
+            <th>Descrição</th>
+            <th>Observações</th>
+            <th>Imagem</th>
+            <th>PDF</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for processo in processos %}
+        <tr>
+            <td>{{ processo.data_analise.strftime('%d/%m/%Y') }}</td>
+            <td>{{ processo.colaborador.nome }}</td>
+            <td>{{ processo.status }}</td>
+            <td>{{ processo.descricao }}</td>
+            <td>{{ processo.observacoes or '---' }}</td>
+            <td>
+                {% if processo.imagem %}
+                    <a href="{{ url_for('static', filename='uploads/' ~ processo.imagem) }}" target="_blank">Ver</a>
+                {% else %}
+                    ---
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ url_for('gerar_pdf', id=processo.id) }}" target="_blank">📄 PDF</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Paginação compatível -->
+{% set query_params = request.args.to_dict() %}
+<nav aria-label="Paginação">
+  <ul class="pagination">
+    {% if processos.has_prev %}
+      {% set prev_args = query_params.copy() %}
+      {% set _ = prev_args.update({'page': processos.prev_num}) %}
+      <li><a href="{{ url_for('painel', **prev_args) }}">← Anterior</a></li>
+    {% else %}
+      <li class="disabled"><span>← Anterior</span></li>
+    {% endif %}
+
+    <li class="active">
+      <span>Página {{ processos.page }} de {{ processos.pages }}</span>
+    </li>
+
+    {% if processos.has_next %}
+      {% set next_args = query_params.copy() %}
+      {% set _ = next_args.update({'page': processos.next_num}) %}
+      <li><a href="{{ url_for('painel', **next_args) }}">Próxima →</a></li>
+    {% else %}
+      <li class="disabled"><span>Próxima →</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}
