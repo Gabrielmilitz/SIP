@@ -2,6 +2,9 @@ from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+#Classes
+
 class Colaborador(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -12,7 +15,7 @@ class Colaborador(db.Model):
 class Processo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
-    data_analise = db.Column(db.DateTime, nullable=False)
+    data_analise = db.Column(db.DateTime, nullable=False) 
     descricao = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     observacoes = db.Column(db.Text)
@@ -24,14 +27,14 @@ class DetalhesProcesso(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     processo_id = db.Column(db.Integer, db.ForeignKey('processo.id'), nullable=False)
 
-    coordenacao = db.Column(db.String(120))
-    lideranca = db.Column(db.String(120))
-    data_inspecao = db.Column(db.Date)
-    inspetor = db.Column(db.String(120))
-    cpf_cnpj = db.Column(db.String(20))
-    coop = db.Column(db.String(120))
-    tipo = db.Column(db.String(120))
-    data_execucao = db.Column(db.Date)
+    coordenacao = db.Column(db.String(120)) 
+    lideranca = db.Column(db.String(120)) 
+    data_inspecao = db.Column(db.Date) 
+    inspetor = db.Column(db.String(120)) 
+    cpf_cnpj = db.Column(db.String(20)) 
+    coop = db.Column(db.String(120)) 
+    tipo = db.Column(db.String(120)) 
+    data_execucao = db.Column(db.Date) 
     interno_externo = db.Column(db.String(50))
     tipo_autorizacao = db.Column(db.String(120))
     tipo_erro = db.Column(db.String(120))

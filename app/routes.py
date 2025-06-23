@@ -1,20 +1,37 @@
-from flask import render_template, redirect, url_for, flash, send_file, request, session, Response
-from flask import current_app as app
-from app import db
-from app.forms import ColaboradorForm, ProcessoForm, DeletarTodosForm, LoginForm
-from werkzeug.utils import secure_filename
-import os, csv, io
-from datetime import datetime
-from reportlab.lib.pagesizes import A4
-from reportlab.pdfgen import canvas
+
+# Bibliotecas importadas 
+
+import os
+import csv
 from io import BytesIO
-from openpyxl import Workbook
-from flask import send_file
-from io import BytesIO
-from app.models import Colaborador, Processo, DetalhesProcesso, SenhaUsuario
-from reportlab.lib.utils import ImageReader, simpleSplit
 from datetime import datetime, timedelta
 
+# renderização
+from flask import (
+    render_template, redirect, url_for, flash, send_file,
+    request, session, Response, current_app as app
+)
+from werkzeug.utils import secure_filename
+
+
+from app import db
+from app.forms import ColaboradorForm, ProcessoForm, DeletarTodosForm, LoginForm
+from app.models import Colaborador, Processo, DetalhesProcesso, SenhaUsuario
+
+
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader, simpleSplit
+
+# openpyxl para gerar o objeto planilha
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+
+from app.forms import TrocarSenhaForm
+from app.models import SenhaUsuario
+
+
+# ROTAS E DEFINIÇÕES
 
 @app.route('/')
 def home_redirect():
@@ -60,7 +77,7 @@ def novo_processo():
             caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             form.imagem.data.save(caminho)
 
-        # Corrige a hora com fuso de Brasília
+        # Corrige a hora com fusp
         brasil_time = datetime.utcnow() - timedelta(hours=3)
 
         processo = Processo(
@@ -74,7 +91,7 @@ def novo_processo():
         db.session.add(processo)
         db.session.commit()
 
-        # ✅ Adiciona os detalhes extras agora
+        # extra (não total)
         detalhes = DetalhesProcesso(
             processo_id=processo.id,
             coordenacao=form.coordenacao.data,
@@ -103,12 +120,6 @@ def novo_processo():
     return render_template('novo_processo.html', form=form)
 
 
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-
-from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
-from datetime import datetime
-from io import BytesIO
-
 @app.route('/exportar-xlsx')
 def exportar_xlsx():
     data_inicio = request.args.get('data_inicio')
@@ -125,18 +136,21 @@ def exportar_xlsx():
     wb = Workbook()
     ws = wb.active
 
-    # ✅ Título seguro: sem risco de exceder 31 caracteres
     titulo = f"{data_inicio}_a_{data_fim}"
     ws.title = titulo[:31]
 
-    # Estilos
+    # Estilos (verifica a possibilidade de alterar a cor do cabeçalho para azul pp a planilha da qualidade é azul, (pesquisar tom de azul))
     header_font = Font(bold=True, color="000000")
     header_fill = PatternFill("solid", fgColor="D9D9D9")
     alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
     border = Border(left=Side(style='thin'), right=Side(style='thin'),
                     top=Side(style='thin'), bottom=Side(style='thin'))
 
-    # Cabeçalhos
+#cores para cabeçalho
+# ADD8E6 ou 0000FF ou 87CEEB ou 4682B4  
+
+
+    # Cabeçalhos da planilha em ordem (de acordo com a planilha da qualidade, deve ser nessa ordem)
     cabecalhos = [
         "COORDENACAO", "LIDERANCA", "DATA DA INSPECAO", "INSPETOR", "CPF/CNPJ", "COOP", "TIPO",
         "DATA DE EXECUCAO", "INTERNO OU EXTERNO", "TIPO DE AUTORIZACAO", "COLABORADOR",
@@ -174,15 +188,15 @@ def exportar_xlsx():
             p.observacoes or '',
             d.solicitante if d else ''
         ]
-        ws.append([str(c) if c is not None else '' for c in linha])  # evita erro com tipos inválidos
+        ws.append([str(c) if c is not None else '' for c in linha])  
 
-    # Estilização das células
+    
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=len(cabecalhos)):
         for cell in row:
             cell.alignment = alignment
             cell.border = border
 
-    # Ajustar largura das colunas
+    # mesma largura utiliza na planilha da qualidade! (Ajustar caso necessário)
     for col in ws.columns:
         max_length = 0
         col_letter = col[0].column_letter
@@ -191,7 +205,7 @@ def exportar_xlsx():
                 max_length = max(max_length, len(str(cell.value)))
         ws.column_dimensions[col_letter].width = max_length + 2
 
-    # Congela a primeira linha
+    
     ws.freeze_panes = 'A2'
 
     output = BytesIO()
@@ -205,16 +219,23 @@ def exportar_xlsx():
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
+# DELETAR DATOS   (revisar se possivel melhorar rota)
 
 @app.route('/deletar-todos', methods=['POST'])
 def deletar_todos():
     form = DeletarTodosForm()
     if form.validate_on_submit():
+        # Primeiro, deleta os detalhes vinculados
+        db.session.query(DetalhesProcesso).delete()
+        # Depois, deleta os processos
         db.session.query(Processo).delete()
         db.session.commit()
-        flash('Todos os registros de processo foram apagados.', 'warning')
+        flash('Todos os registros de processo e detalhes foram apagados.', 'warning')
     return redirect(url_for('index'))
 
+
+
+# PAINEL 
 
 @app.route('/painel', methods=['GET'])
 def painel():
@@ -258,6 +279,8 @@ def painel():
                            processos=processos)
 
 
+
+# LOGIN  (critico, precisa de revisão e se possivel melhorar)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -309,7 +332,7 @@ def gerar_pdf(id):
 
     pdf.setFont("Helvetica", 12)
 
-    # ✅ Usa data_execucao se existir, senão usa data_analise
+    # Usa data_execucao se existir, senão usa data_analise
     data_execucao = (
         processo.detalhes.data_execucao.strftime('%d/%m/%Y')
         if processo.detalhes and processo.detalhes.data_execucao
@@ -367,8 +390,7 @@ def gerar_pdf(id):
     return send_file(buffer, as_attachment=True, download_name=f'processo_{id}.pdf', mimetype='application/pdf')
 
 
-from app.forms import TrocarSenhaForm
-from app.models import SenhaUsuario
+
 
 
 @app.route('/trocar-senha', methods=['GET', 'POST'])
@@ -404,7 +426,7 @@ def trocar_senha():
 
     return render_template('trocar_senha.html', form=form)
 
-#====
+# MEU PERFIL (utiliza o filter, sinceramente poderia ser melhor)
 
 @app.route('/meu_perfil')
 def meu_perfil():
