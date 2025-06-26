@@ -4,73 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SIP - Sistema Integrado de Inspeção{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fc;
-            color: #2c3e50;
-        }
-        .navbar {
-            background-color: #2c3e50;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .navbar .logo {
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .navbar .menu a {
-            color: white;
-            margin-left: 20px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        .navbar .menu a:hover {
-            color: #1abc9c;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        footer {
-            text-align: center;
-            padding: 15px;
-            color: #777;
-            font-size: 14px;
-        }
-        .pdf-image {
-            display: flex;
-            justify-content: center;
-            margin: 30px 0;
-        }
-        .pdf-image img {
-            max-width: 80%;
-            height: auto;
-        }
-        .flash-message {
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .flash-message.success { background-color: #d4edda; color: #155724; }
-        .flash-message.warning { background-color: #fff3cd; color: #856404; }
-        .flash-message.danger  { background-color: #f8d7da; color: #721c24; }
-        .flash-message.info    { background-color: #cce5ff; color: #004085; }
-    </style>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/base_estilo.css') }}">
+
+    
 </head>
+
+<script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
+
 <body>
 
     {% if session.get('logado') %}
@@ -92,16 +32,16 @@
     <main class="container">
 
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message {{ category }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}" id="flash-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-        {% block content %}{% endblock %}
+    {% block content %}{% endblock %}
     </main>
 
     <footer>
@@ -109,5 +49,6 @@
     </footer>
 
     {% block scripts %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
 </body>
 </html>

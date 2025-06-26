@@ -3,72 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Login - SIP</title>
-    <style>
-        body {
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            font-family: sans-serif;
-        }
-        .login-container {
-            background: #f1f3f5;
-            padding: 30px 40px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            position: relative;
-        }
-        .logo {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-        .logo img {
-            height: 100px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-        input[type="text"],
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #1c5986;
-        }
-        .link-ajuda {
-            margin-top: 15px;
-            text-align: center;
-        }
-        .link-ajuda a {
-            color: #2980b9;
-            text-decoration: none;
-            font-size: 0.9em;
-        }
-        .link-ajuda a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_estilo.css') }}">
+    
 </head>
 <body>
     <div class="logo">
