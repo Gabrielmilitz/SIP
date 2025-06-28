@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/deletar_registro_estilo.css') }}">
+<div class="container">
+    <h2 class="text-danger">⚠️ Deletar Todos os Registros</h2>
+    <p>Esta ação <strong>irá apagar permanentemente</strong> todos os processos registrados no sistema.</p>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <button type="submit" class="btn btn-danger">Confirmar Exclusão Total</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

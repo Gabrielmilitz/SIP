@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/colaboradores_estilo.css') }}">
+
+<h2>Lista de Colaboradores</h2>
+
+<table>
+    <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Qtd. de Processos</th>
+    </tr>
+    {% for c in colaboradores %}
+    <tr>
+        <td>{{ c.nome }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.total_processos }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

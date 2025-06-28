@@ -21,7 +21,7 @@
 
     button {
         padding: 6px 12px;
-        background-color: #3498db;
+        background-color: #2f353a;
         border: none;
         color: white;
         border-radius: 4px;
@@ -85,7 +85,7 @@
     }
 
     .pagination .active span {
-        background-color: #3498db;
+        background-color: #30363a;
         color: white;
-        border-color: #3498db;
+        border-color: #363d42;
     }

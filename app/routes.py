@@ -30,6 +30,7 @@ from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from app.forms import TrocarSenhaForm
 from app.models import SenhaUsuario
 
+from flask import redirect
 
 # ROTAS E DEFINIÇÕES
 
@@ -221,20 +222,16 @@ def exportar_xlsx():
 
 # DELETAR DATOS   (revisar se possivel melhorar rota)
 
-@app.route('/deletar-todos', methods=['POST'])
-def deletar_todos():
+@app.route('/deletar-registros', methods=['GET', 'POST'])
+def deletar_registros():
     form = DeletarTodosForm()
     if form.validate_on_submit():
-        # Primeiro, deleta os detalhes vinculados
         db.session.query(DetalhesProcesso).delete()
-        # Depois, deleta os processos
         db.session.query(Processo).delete()
         db.session.commit()
         flash('Todos os registros de processo e detalhes foram apagados.', 'warning')
-    return redirect(url_for('index'))
-
-
-
+        return redirect(url_for('index'))
+    return render_template('deletar_registros.html', form=form)
 # PAINEL 
 
 @app.route('/painel', methods=['GET'])
@@ -457,3 +454,39 @@ def meu_perfil():
                            diff_total=diff_total,
                            diff_conformes=diff_conformes,
                            diff_desvios=diff_desvios)
+
+
+
+
+@app.route('/colaboradores')
+def listar_colaboradores():
+    colaboradores = Colaborador.query.all()
+
+    dados_colaboradores = []
+    for colaborador in colaboradores:
+        total_processos = Processo.query.filter_by(colaborador_id=colaborador.id).count()
+        dados_colaboradores.append({
+            'id': colaborador.id,
+            'nome': colaborador.nome,
+            'email': colaborador.email,
+            'total_processos': total_processos
+        })
+
+    return render_template('colaboradores.html', colaboradores=dados_colaboradores)
+
+
+@app.route('/grafico-processos')
+def grafico_processos():
+    conformes = Processo.query.filter_by(status='Conforme').count()
+    desvios = Processo.query.filter_by(status='Desvio').count()
+
+    return render_template('grafico_processos.html',
+                           conformes=conformes,
+                           desvios=desvios)
+
+
+#redirecionamento suporte com assistente
+
+@app.route('/assistente-virtual')
+def assistente_virtual():
+    return redirect("https://nicolebr1.onrender.com/")

@@ -4,16 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SIP - Sistema Integrado de Inspeção{% endblock %}</title>
-   <link rel="stylesheet" href="{{ url_for('static', filename='css/base_estilo.css') }}">
-
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base_estilo.css') }}">
 </head>
-
-<script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
 
 <body>
 
-    {% if session.get('logado') %}
+{% if session.get('logado') %}
     <header class="navbar">
         <div class="logo">
             <i class="fas fa-clipboard-check"></i> SIP Qualidade
@@ -24,14 +20,19 @@
             <a href="{{ url_for('novo_colaborador') }}">Novo Colaborador</a>
             <a href="{{ url_for('painel') }}">Painel</a>
             <a href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
+            <a href="{{ url_for('deletar_registros') }}">Deletar Registros</a>
+            <a href="{{ url_for('listar_colaboradores') }}">Colaboradores</a>
+            <a href="{{ url_for('grafico_processos') }}">Gráfico</a>
+            <a href="https://nicolebr1.onrender.com/" target="_blank" rel="noopener noreferrer">
+    Assistente Virtual
+</a>
             <a href="{{ url_for('logout') }}">Sair</a>
         </nav>
     </header>
-    {% endif %}
+{% endif %}
 
-    <main class="container">
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 <div class="flash-message {{ category }}" id="flash-message">
@@ -42,13 +43,13 @@
     {% endwith %}
 
     {% block content %}{% endblock %}
-    </main>
+</main>
 
-    <footer>
-        SIP &copy; {{ current_year or '2025' }} - Sistema Integrado de Inspeção
-    </footer>
+<footer>
+    SIP &copy; {{ current_year or '2025' }} - Sistema Integrado de Inspeção
+</footer>
 
-    {% block scripts %}{% endblock %}
-    <script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
+{% block scripts %}{% endblock %}
+<script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
 </body>
 </html>

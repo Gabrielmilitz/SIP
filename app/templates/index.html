@@ -4,13 +4,10 @@
 
 <link rel="stylesheet" href="{{ url_for('static', filename='css/index_estilo.css') }}">
 
-
 <h2>Processos Registrados</h2>
 
-<form method="POST" action="{{ url_for('deletar_todos') }}" onsubmit="return confirm('Tem certeza que deseja apagar TODOS os registros?');">
-    {{ deletar_form.hidden_tag() }}
-    {{ deletar_form.submit(class_='btn-apagar') }}
-</form>
+
+
 
 <h3>Exportar Processos por Período</h3>
 <form action="{{ url_for('exportar_xlsx') }}" method="get">
@@ -60,7 +57,6 @@
     </tr>
     {% endfor %}
 </table>
-
 
 <nav aria-label="Paginação">
   <ul class="pagination">
