@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Gráfico de Processos - Conformes x Desvios</h2>
+
+<canvas id="grafico" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const conformes = {{ conformes }};
+    const desvios = {{ desvios }};
+
+    const ctx = document.getElementById('grafico').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Conforme', 'Desvio'],
+            datasets: [{
+                label: 'Quantidade de Processos',
+                data: [conformes, desvios],
+                backgroundColor: ['#27ae60', '#c0392b'],
+                borderColor: ['#1e8449', '#922b21'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    precision: 0
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

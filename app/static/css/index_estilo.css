@@ -1,0 +1,105 @@
+h2, h3 {
+    color: #2c3e50;
+    margin-top: 30px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input[type="date"] {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 6px 12px;
+    background-color: #12310e;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(76, 90, 99);
+}
+
+/* Agora usado como <a>, botão de apagar */
+.btn-apagar {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #c0392b;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.btn-apagar:hover {
+    background-color: #922b21;
+}
+
+table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+a {
+    color: #b929a1;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 20px 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a, .pagination span {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #42545f;
+}
+
+.pagination .disabled span {
+    color: #999;
+    border-color: #eee;
+}
+
+.pagination .active span {
+    background-color: #343f47;
+    color: white;
+    border-color: #3498db;
+}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index_estilo.css') }}">
+
+<h2>Processos Registrados</h2>
+
+
+
+
+<h3>Exportar Processos por Período</h3>
+<form action="{{ url_for('exportar_xlsx') }}" method="get">
+    <label for="data_inicio">De:</label>
+    <input type="date" name="data_inicio" required>
+    <label for="data_fim">Até:</label>
+    <input type="date" name="data_fim" required>
+    <button type="submit">Exportar XLSX</button>
+</form>
+
+<table>
+    <tr>
+        <th>Data</th>
+        <th>Colaborador</th>
+        <th>Status</th>
+        <th>Descrição</th>
+        <th>Observações</th>
+        <th>Imagem</th>
+        <th>PDF</th>
+    </tr>
+    {% for processo in processos.items %}
+    <tr>
+        <td>{{ processo.data_analise.strftime('%d/%m/%Y') if processo.data_analise else '---' }}</td>
+        <td>{{ processo.colaborador.nome }}</td>
+        <td>
+            {% if processo.status == 'Desvio' %}
+                <a target="_blank"
+                   href="https://outlook.office.com/mail/deeplink/compose?to={{ processo.colaborador.email }}&subject=Desvio%20encontrado%20-%20Qualidade&body=Prezados,%0D%0A%0D%0AIdentificamos um desvio no processo abaixo:%0D%0A%0D%0ADescrição: {{ processo.descricao | urlencode }}%0D%0AData da Análise: {{ processo.data_analise.strftime('%d/%m/%Y %H:%M') if processo.data_analise else '---' }}%0D%0AColaborador: {{ processo.colaborador.nome | urlencode }}%0D%0AObservações: {{ processo.observacoes or '---' | urlencode }}%0D%0A%0D%0AEm caso de dúvida, estamos à disposição.%0D%0A%0D%0AAtenciosamente,%0D%0AEquipe de Qualidade">
+                    📧 Desvio
+                </a>
+            {% else %}
+                ✅ Conforme
+            {% endif %}
+        </td>
+        <td>{{ processo.descricao }}</td>
+        <td>{{ processo.observacoes or '---' }}</td>
+        <td>
+            {% if processo.imagem %}
+                <a href="{{ url_for('static', filename='uploads/' ~ processo.imagem) }}" target="_blank">Ver</a>
+            {% else %}
+                ---
+            {% endif %}
+        </td>
+        <td>
+            <a href="{{ url_for('gerar_pdf', id=processo.id) }}" target="_blank">📄 PDF</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<nav aria-label="Paginação">
+  <ul class="pagination">
+    {% if processos.has_prev %}
+      <li><a href="{{ url_for('index', page=processos.prev_num) }}">← Anterior</a></li>
+    {% else %}
+      <li class="disabled"><span>← Anterior</span></li>
+    {% endif %}
+
+    <li class="active">
+      <span>Página {{ processos.page }} de {{ processos.pages }}</span>
+    </li>
+
+    {% if processos.has_next %}
+      <li><a href="{{ url_for('index', page=processos.next_num) }}">Próxima →</a></li>
+    {% else %}
+      <li class="disabled"><span>Próxima →</span></li>
+    {% endif %}
+  </ul>
+</nav>
+
+{% endblock %}

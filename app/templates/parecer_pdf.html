@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Parecer de Inspeção</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/parecer_estilo.css') }}">
+   
+</head>
+<body>
+    <div class="header">
+        <img src="{{ logo_path }}">
+    </div>
+    <h1>Parecer de Inspeção</h1>
+
+    <div class="info">
+        <p><strong>Data:</strong> {{ processo.data_analise.strftime('%d/%m/%Y %H:%M') }}</p>
+        <p><strong>Colaborador:</strong> {{ processo.colaborador.nome }}</p>
+        <p><strong>Status:</strong> {{ processo.status }}</p>
+    </div>
+
+    <div class="descricao">
+        <strong>Descrição do Processo:</strong>
+        <p>{{ processo.descricao }}</p>
+    </div>
+
+    <div class="observacoes">
+        <strong>Observações:</strong>
+        <p>{{ processo.observacoes or 'Sem observações.' }}</p>
+    </div>
+
+    {% if processo.imagem %}
+    <div class="imagem">
+        <strong>Imagem Anexada:</strong><br>
+        <img src="{{ imagem_path }}">
+    </div>
+    {% endif %}
+
+    <footer>
+        SIP - Sistema Integrado de Inspeção | Parecer gerado automaticamente
+    </footer>
+</body>
+</html>

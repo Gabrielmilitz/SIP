@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Meu Perfil - SIP{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfil_estilo.css') }}">
+
+<div class="perfil-container">
+    <div class="info-perfil">
+        <h2>Resumo de Inspeções do Mês</h2>
+
+        <div class="info-box">
+            <strong>Total:</strong> {{ total_mes_atual }} inspeções
+            {% if diff_total != 0 %}
+                <div class="comparacao {{ 'positivo' if diff_total > 0 else 'negativo' }}">
+                    {{ "+" if diff_total > 0 else "" }}{{ diff_total }} em relação ao mês passado
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="info-box">
+            <strong>Conformes:</strong> {{ conformes_mes_atual }}
+            {% if diff_conformes != 0 %}
+                <div class="comparacao {{ 'positivo' if diff_conformes > 0 else 'negativo' }}">
+                    {{ "+" if diff_conformes > 0 else "" }}{{ diff_conformes }} em relação ao mês passado
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="info-box">
+            <strong>Desvios:</strong> {{ desvios_mes_atual }}
+            {% if diff_desvios != 0 %}
+                <div class="comparacao {{ 'positivo' if diff_desvios > 0 else 'negativo' }}">
+                    {{ "+" if diff_desvios > 0 else "" }}{{ diff_desvios }} em relação ao mês passado
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

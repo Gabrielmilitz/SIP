@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - SIP</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login_estilo.css') }}">
+    
+</head>
+<body>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='img/logo_empresa.png') }}" alt="Logo da Empresa">
+    </div>
+
+    <div class="login-container">
+        <h2>SIP - SISTEMA INTEGRADO DE INSPEÇÃO</h2>
+        <form method="POST" autocomplete="off">
+            {{ form.hidden_tag() }}
+
+            <label for="email">E-mail</label>
+            {{ form.email(size=32, autocomplete="off") }}
+
+            <label for="senha">Senha</label>
+            {{ form.senha(size=32, autocomplete="new-password") }}
+
+            {{ form.submit(class_="btn-login") }}
+        </form>
+
+        <div class="link-ajuda">
+            <a href="{{ url_for('trocar_senha') }}">Esqueceu ou deseja trocar a senha?</a>
+        </div>
+    </div>
+</body>
+</html>
