@@ -3,16 +3,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from flask_wtf.csrf import CSRFProtect
-from flask_migrate import Migrate  # <-- IMPORTANTE
-import pymysql
-pymysql.install_as_MySQLdb()
-
+from flask_migrate import Migrate
 
 # Instâncias globais
 db = SQLAlchemy()
 mail = Mail()
 csrf = CSRFProtect()
-migrate = Migrate()  # <-- Adicionado
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
@@ -28,9 +25,14 @@ def create_app():
     db.init_app(app)
     mail.init_app(app)
     csrf.init_app(app)
-    migrate.init_app(app, db)  # <-- ESSENCIAL
+    migrate.init_app(app, db)
 
-    # Registra rotas
+    # Importa modelos e rotas
     with app.app_context():
+        from app import models
         from app import routes
-        return app
+
+        # CRIA AS TABELAS AUTOMATICAMENTE
+        db.create_all()
+
+    return app

@@ -2,14 +2,15 @@ import os
 from dotenv import load_dotenv
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))  # Carrega as variáveis do .env
+load_dotenv(os.path.join(basedir, '.env'))
 
-SECRET_KEY = os.getenv('SECRET_KEY')
-SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI')
+SECRET_KEY = os.getenv('SECRET_KEY') or "sip_chave_secreta"
+
+SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI') or "sqlite:///database.db"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
 UPLOAD_FOLDER = os.path.join(basedir, 'app', 'static', 'uploads')
 
-# Configuração de e-mail
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 587
 MAIL_USE_TLS = True
