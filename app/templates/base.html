@@ -4,52 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SIP - Sistema Integrado de Inspeção{% endblock %}</title>
+
+    <!-- CSS do sistema -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base_estilo.css') }}">
+
+    <!-- CSS Select2 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+
+    <style>
+        /* garante largura correta */
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+
 </head>
 
 <body>
 
 {% if session.get('logado') %}
-    <header class="navbar">
-        <div class="logo">
-            <i class="fas fa-clipboard-check"></i> SIP Qualidade
-        </div>
-        <nav class="menu">
-            <a href="{{ url_for('index') }}">Início</a>
-            <a href="{{ url_for('novo_processo') }}">Novo Processo</a>
-            <a href="{{ url_for('novo_colaborador') }}">Novo Colaborador</a>
-            <a href="{{ url_for('painel') }}">Painel</a>
-            <a href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
-            <a href="{{ url_for('deletar_registros') }}">Deletar Registros</a>
-            <a href="{{ url_for('listar_colaboradores') }}">Colaboradores</a>
-            <a href="{{ url_for('grafico_processos') }}">Gráfico</a>
-            <a href="https://nicolebr1.onrender.com/" target="_blank" rel="noopener noreferrer">
-    Assistente Virtual
-</a>
-            <a href="{{ url_for('logout') }}">Sair</a>
-        </nav>
-    </header>
+<header class="navbar">
+    <div class="logo">
+        <i class="fas fa-clipboard-check"></i> SIP Qualidade
+    </div>
+
+    <nav class="menu">
+        <a href="{{ url_for('index') }}">Início</a>
+        <a href="{{ url_for('novo_processo') }}">Novo Processo</a>
+        <a href="{{ url_for('novo_colaborador') }}">Novo Colaborador</a>
+        <a href="{{ url_for('painel') }}">Painel</a>
+        <a href="{{ url_for('meu_perfil') }}">Meu Perfil</a>
+        <a href="{{ url_for('deletar_registros') }}">Deletar Registros</a>
+        <a href="{{ url_for('listar_colaboradores') }}">Colaboradores</a>
+        <a href="{{ url_for('grafico_processos') }}">Gráfico</a>
+
+        <a href="https://nicolebr1.onrender.com/" target="_blank" rel="noopener noreferrer">
+            Assistente Virtual
+        </a>
+
+        <a href="{{ url_for('logout') }}">Sair</a>
+    </nav>
+</header>
 {% endif %}
 
 <main class="container">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash-message {{ category }}" id="flash-message">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
 
-    {% block content %}{% endblock %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="flash-message {{ category }}" id="flash-message">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
 </main>
 
 <footer>
     SIP &copy; {{ current_year or '2025' }} - Sistema Integrado de Inspeção
 </footer>
 
+<!-- JQuery (precisa vir antes do Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<!-- Scripts específicos das páginas -->
 {% block scripts %}{% endblock %}
+
 <script src="{{ url_for('static', filename='js/flash_message.js') }}"></script>
+
 </body>
 </html>
