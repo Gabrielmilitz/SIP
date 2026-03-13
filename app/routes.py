@@ -5,7 +5,6 @@ import os
 import csv
 from io import BytesIO
 from datetime import datetime, timedelta
-from flask import jsonify, request
 
 # renderização
 from flask import (
@@ -67,35 +66,19 @@ def novo_colaborador():
     return render_template('novo_colaborador.html', form=form)
 
 
-
 @app.route('/processo/novo', methods=['GET', 'POST'])
 def novo_processo():
-
     form = ProcessoForm()
-
-    # carregar colaboradores na lista
-    form.colaborador.choices = [(c.id, c.nome) for c in Colaborador.query.order_by(Colaborador.nome).all()]
-
-    # Preencher automaticamente dados da última inspeção
-    if 'ultimo_processo' in session and request.method == 'GET':
-        dados = session['ultimo_processo']
-
-        form.coordenacao.data = dados.get('coordenacao')
-        form.lideranca.data = dados.get('lideranca')
-        form.data_inspecao.data = dados.get('data_inspecao')
-        form.inspetor.data = dados.get('inspetor')
-        form.interno_externo.data = dados.get('interno_externo')
-        form.data_execucao.data = dados.get('data_execucao')
-        form.tipo_autorizacao.data = dados.get('tipo_autorizacao')
+    form.colaborador.choices = [(c.id, c.nome) for c in Colaborador.query.all()]
 
     if form.validate_on_submit():
-
         filename = None
         if form.imagem.data:
             filename = secure_filename(form.imagem.data.filename)
             caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             form.imagem.data.save(caminho)
 
+        # Corrige a hora com fusp
         brasil_time = datetime.utcnow() - timedelta(hours=3)
 
         processo = Processo(
@@ -104,12 +87,12 @@ def novo_processo():
             status=form.status.data,
             observacoes=form.observacoes.data,
             imagem=filename,
-            data_analise=brasil_time
+            data_analise=brasil_time  # Agora é salvo corretamente
         )
-
         db.session.add(processo)
         db.session.commit()
 
+        # extra (não total)
         detalhes = DetalhesProcesso(
             processo_id=processo.id,
             coordenacao=form.coordenacao.data,
@@ -129,91 +112,13 @@ def novo_processo():
             fluxos=form.fluxos.data,
             solicitante=form.solicitante.data
         )
-
         db.session.add(detalhes)
         db.session.commit()
 
         flash('Processo registrado com sucesso!', 'success')
-
-        return redirect(url_for('continuar_processo', id=processo.id))
-
-    return render_template('novo_processo.html', form=form)
-      
-
-@app.route('/processo/continuar/<int:id>', methods=['GET', 'POST'])
-def continuar_processo(id):
-
-    processo = Processo.query.get_or_404(id)
-    detalhes = processo.detalhes
-
-    form = ProcessoForm()
-
-    form.colaborador.choices = [(c.id, c.nome) for c in Colaborador.query.all()]
-
-    # PREENCHE AUTOMATICAMENTE
-    if request.method == 'GET':
-        form.colaborador.data = processo.colaborador_id
-        form.coordenacao.data = detalhes.coordenacao
-        form.lideranca.data = detalhes.lideranca
-        form.data_inspecao.data = detalhes.data_inspecao
-        form.inspetor.data = detalhes.inspetor
-        form.interno_externo.data = detalhes.interno_externo
-        form.tipo_autorizacao.data = detalhes.tipo_autorizacao
-        form.data_execucao.data = detalhes.data_execucao
-
-    if form.validate_on_submit():
-
-        filename = None
-        if form.imagem.data:
-            filename = secure_filename(form.imagem.data.filename)
-            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            form.imagem.data.save(caminho)
-
-        brasil_time = datetime.utcnow() - timedelta(hours=3)
-
-        novo = Processo(
-            colaborador_id=form.colaborador.data,
-            descricao=form.descricao.data,
-            status=form.status.data,
-            observacoes=form.observacoes.data,
-            imagem=filename,
-            data_analise=brasil_time
-        )
-
-        db.session.add(novo)
-        db.session.commit()
-
-        detalhes_novo = DetalhesProcesso(
-            processo_id=novo.id,
-            coordenacao=form.coordenacao.data,
-            lideranca=form.lideranca.data,
-            data_inspecao=form.data_inspecao.data,
-            inspetor=form.inspetor.data,
-            cpf_cnpj=form.cpf_cnpj.data,
-            coop=form.coop.data,
-            tipo=form.tipo.data,
-            data_execucao=form.data_execucao.data,
-            interno_externo=form.interno_externo.data,
-            tipo_autorizacao=form.tipo_autorizacao.data,
-            tipo_erro=form.tipo_erro.data,
-            gravidade=form.gravidade.data,
-            desvio_atencao=form.desvio_atencao.data,
-            reversao=form.reversao.data,
-            fluxos=form.fluxos.data,
-            solicitante=form.solicitante.data
-        )
-
-        db.session.add(detalhes_novo)
-        db.session.commit()
-
-        flash('Processo registrado com sucesso!', 'success')
-
-        return redirect(url_for('continuar_processo', id=novo.id))
+        return redirect(url_for('index'))
 
     return render_template('novo_processo.html', form=form)
-
-
-
 
 
 @app.route('/exportar-xlsx')
@@ -437,7 +342,7 @@ def gerar_pdf(id):
     y -= 20
     pdf.drawString(50, y, f"Status: {processo.status}")
     y -= 20
-    pdf.drawString(50, y, f"Descrição do erro: {processo.descricao}")
+    pdf.drawString(50, y, f"Descrição: {processo.descricao}")
     y -= 40
 
     if processo.observacoes:
@@ -585,24 +490,3 @@ def grafico_processos():
 @app.route('/assistente-virtual')
 def assistente_virtual():
     return redirect("https://nicolebr1.onrender.com/")
-
-
-
-@app.route('/buscar_colaborador')
-def buscar_colaborador():
-
-    termo = request.args.get('q', '')
-
-    colaboradores = Colaborador.query.filter(
-        Colaborador.nome.ilike(f"%{termo}%")
-    ).limit(20).all()
-
-    resultados = []
-
-    for c in colaboradores:
-        resultados.append({
-            "id": c.id,
-            "text": c.nome
-        })
-
-    return jsonify(resultados)
