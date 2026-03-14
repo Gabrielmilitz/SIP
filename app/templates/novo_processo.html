@@ -5,9 +5,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/novo_processo.css') }}">
 
 <h2>Registrar Novo Processo</h2>
+
 <form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-
 
 <div>
     <label>{{ form.colaborador.label }}</label>
@@ -34,7 +34,7 @@
     {{ form.imagem(class="form-control", multiple=True) }}
 </div>
 
-<div class="subsection">Informações Detalhadas (para exportação)</div>
+<div class="subsection">Inspeções</div>
 
 <div>
     <label>{{ form.coordenacao.label }}</label>
@@ -58,7 +58,7 @@
 
 <div>
     <label>{{ form.cpf_cnpj.label }}</label>
-    {{ form.cpf_cnpj() }}
+    {{ form.cpf_cnpj(id="cpf_cnpj", maxlength="18", oninput="formatarCpfCnpj(this)", inputmode="numeric") }}
 </div>
 
 <div>
@@ -120,6 +120,30 @@
     {{ form.submit() }}
 </div>
 
-
 </form>
+
+<script>
+function formatarCpfCnpj(campo){
+
+    let valor = campo.value.replace(/\D/g,'');
+
+    if(valor.length <= 11){
+
+        valor = valor.replace(/(\d{3})(\d)/,"$1.$2");
+        valor = valor.replace(/(\d{3})(\d)/,"$1.$2");
+        valor = valor.replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+
+    }else{
+
+        valor = valor.replace(/^(\d{2})(\d)/,"$1.$2");
+        valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3");
+        valor = valor.replace(/\.(\d{3})(\d)/,".$1/$2");
+        valor = valor.replace(/(\d{4})(\d)/,"$1-$2");
+
+    }
+
+    campo.value = valor;
+}
+</script>
+
 {% endblock %}

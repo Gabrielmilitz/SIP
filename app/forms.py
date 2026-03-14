@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, TextAreaField, SubmitField, SelectField, PasswordField, DateField
 from wtforms.validators import DataRequired, Email
-
+from wtforms.validators import Optional
 
 class ColaboradorForm(FlaskForm):
     nome = StringField('Nome', validators=[DataRequired()])
@@ -14,7 +14,7 @@ class ProcessoForm(FlaskForm):
 
     colaborador = SelectField('Colaborador', coerce=int, validators=[DataRequired()])
 
-    descricao = TextAreaField('Descrição do Processo', validators=[DataRequired()])
+    descricao = TextAreaField('Descrição do Processo', validators=[Optional()])
 
     status = SelectField(
         'Status',

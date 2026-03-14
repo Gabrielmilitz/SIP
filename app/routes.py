@@ -363,7 +363,9 @@ def logout():
 
 @app.route('/processo/<int:id>/pdf')
 def gerar_pdf(id):
+
     processo = Processo.query.get_or_404(id)
+
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
 
@@ -380,61 +382,111 @@ def gerar_pdf(id):
         if processo.detalhes and processo.detalhes.data_execucao
         else processo.data_analise.strftime('%d/%m/%Y %H:%M')
     )
+
     pdf.drawString(50, y, f"Data: {data_execucao}")
     y -= 20
 
     pdf.drawString(50, y, f"Colaborador: {processo.colaborador.nome}")
     y -= 20
+
     pdf.drawString(50, y, f"Status: {processo.status}")
     y -= 20
+
     pdf.drawString(50, y, f"Descrição: {processo.descricao}")
     y -= 40
 
+
+    # Observações
     if processo.observacoes:
+
         pdf.drawString(50, y, "Observações:")
         y -= 20
+
         linhas_obs = simpleSplit(processo.observacoes, "Helvetica", 12, 500)
+
         text = pdf.beginText(50, y)
         text.setFont("Helvetica", 12)
+
         for linha in linhas_obs:
             text.textLine(linha)
+
         pdf.drawText(text)
         y = text.getY() - 20
 
+
+    # Parecer quando é desvio
     if processo.status == 'Desvio':
+
         pdf.setFont("Helvetica-Bold", 12)
         pdf.drawString(50, y, "PARECER:")
         y -= 20
+
         pdf.setFont("Helvetica", 12)
+
         parecer = (
             "Conforme análise realizada, identificamos um ponto de atenção neste processo. "
             "Recomenda-se avaliação complementar e plano de ação conforme aplicável."
         )
+
         linhas_parecer = simpleSplit(parecer, "Helvetica", 12, 500)
+
         text = pdf.beginText(50, y)
+
         for linha in linhas_parecer:
             text.textLine(linha)
+
         pdf.drawText(text)
         y = text.getY() - 20
 
-    if processo.imagem:
-        imagem_path = os.path.join(app.root_path, 'static', 'uploads', processo.imagem)
-        if os.path.exists(imagem_path):
-            try:
-                pdf.drawImage(ImageReader(imagem_path), 130, y - 200, width=300, height=200)
-            except Exception:
-                pass
+
+    # IMAGENS
+    if processo.imagens:
+
+        for img in processo.imagens:
+
+            imagem_path = os.path.join(
+                app.root_path,
+                'static',
+                'uploads',
+                img.nome_arquivo
+            )
+
+            if os.path.exists(imagem_path):
+
+                try:
+
+                    if y < 250:
+                        pdf.showPage()
+                        y = 800
+
+                    pdf.drawImage(
+                        ImageReader(imagem_path),
+                        130,
+                        y - 200,
+                        width=300,
+                        height=200
+                    )
+
+                    y -= 220
+
+                except Exception:
+                    pass
+
+    else:
+        pdf.drawString(50, y, "Nenhuma evidência anexada.")
+
 
     pdf.showPage()
     pdf.save()
 
     buffer.seek(0)
-    return send_file(buffer, as_attachment=True, download_name=f'processo_{id}.pdf', mimetype='application/pdf')
 
-
-
-
-
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f'processo_{id}.pdf',
+        mimetype='application/pdf'
+    )
 @app.route('/trocar-senha', methods=['GET', 'POST'])
 def trocar_senha():
     form = TrocarSenhaForm()
