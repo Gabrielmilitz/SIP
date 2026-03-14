@@ -28,9 +28,10 @@ class ProcessoForm(FlaskForm):
     observacoes = TextAreaField('Observações')
 
     imagem = FileField(
-        'Imagem',
-        validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Apenas imagens são permitidas')]
-    )
+    'Imagens',
+    render_kw={"multiple": True},
+    validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Apenas imagens são permitidas')]
+)
 
     coordenacao = SelectField(
         'Coordenação',

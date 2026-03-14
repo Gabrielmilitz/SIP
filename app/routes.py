@@ -16,7 +16,7 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.forms import ColaboradorForm, ProcessoForm, DeletarTodosForm, LoginForm, DeletarPorColaboradorForm
-from app.models import Colaborador, Processo, DetalhesProcesso, SenhaUsuario
+from app.models import Colaborador, Processo, DetalhesProcesso, SenhaUsuario, ImagemProcesso
 
 
 from reportlab.lib.pagesizes import A4
@@ -72,27 +72,50 @@ def novo_processo():
     form.colaborador.choices = [(c.id, c.nome) for c in Colaborador.query.all()]
 
     if form.validate_on_submit():
-        filename = None
-        if form.imagem.data:
-            filename = secure_filename(form.imagem.data.filename)
-            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            form.imagem.data.save(caminho)
 
-        # Corrige a hora com fusp
+        imagens = request.files.getlist('imagem')
+
         brasil_time = datetime.utcnow() - timedelta(hours=3)
+
+        filename_principal = None
+
+        if imagens and imagens[0].filename != '':
+            filename_principal = secure_filename(imagens[0].filename)
+            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename_principal)
+            imagens[0].save(caminho)
 
         processo = Processo(
             colaborador_id=form.colaborador.data,
             descricao=form.descricao.data,
             status=form.status.data,
             observacoes=form.observacoes.data,
-            imagem=filename,
-            data_analise=brasil_time  # Agora é salvo corretamente
+            imagem=filename_principal,
+            data_analise=brasil_time
         )
+
         db.session.add(processo)
         db.session.commit()
 
-        # extra (não total)
+        # salvar todas as imagens
+        for img in imagens:
+
+            if img.filename == '':
+                continue
+
+            filename = secure_filename(img.filename)
+            caminho = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+            if filename != filename_principal:
+                img.save(caminho)
+
+            nova_imagem = ImagemProcesso(
+                processo_id=processo.id,
+                nome_arquivo=filename
+            )
+
+            db.session.add(nova_imagem)
+
+        # salvar detalhes
         detalhes = DetalhesProcesso(
             processo_id=processo.id,
             coordenacao=form.coordenacao.data,
@@ -112,14 +135,16 @@ def novo_processo():
             fluxos=form.fluxos.data,
             solicitante=form.solicitante.data
         )
+
         db.session.add(detalhes)
+
+        # commit final
         db.session.commit()
 
         flash('Processo registrado com sucesso!', 'success')
         return redirect(url_for('index'))
 
     return render_template('novo_processo.html', form=form)
-
 
 @app.route('/exportar-xlsx')
 def exportar_xlsx():
@@ -510,3 +535,15 @@ def grafico_processos():
 @app.route('/assistente-virtual')
 def assistente_virtual():
     return redirect("https://nicolebr1.onrender.com/")
+
+
+#nova rota
+@app.route('/processo/<int:id>/imagens')
+def ver_imagens_processo(id):
+
+    processo = Processo.query.get_or_404(id)
+
+    return render_template(
+        'ver_imagens.html',
+        processo=processo
+    )

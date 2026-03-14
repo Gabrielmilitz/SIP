@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>Imagens do Processo</h2>
+
+{% for img in processo.imagens %}
+
+<div style="margin-bottom:20px;">
+    <img src="{{ url_for('static', filename='uploads/' ~ img.nome_arquivo) }}"
+         style="max-width:600px;">
+</div>
+
+{% endfor %}
+
+{% endblock %}

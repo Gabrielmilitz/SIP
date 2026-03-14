@@ -25,7 +25,7 @@
         <th>Status</th>
         <th>Descrição</th>
         <th>Observações</th>
-        <th>Imagem</th>
+        <th>Evidências</th>
         <th>PDF</th>
     </tr>
     {% for processo in processos.items %}
@@ -36,21 +36,23 @@
             {% if processo.status == 'Desvio' %}
                 <a target="_blank"
                    href="https://outlook.office.com/mail/deeplink/compose?to={{ processo.colaborador.email }}&subject=Desvio%20encontrado%20-%20Qualidade&body=Prezados,%0D%0A%0D%0AIdentificamos um desvio no processo abaixo:%0D%0A%0D%0ADescrição: {{ processo.descricao | urlencode }}%0D%0AData da Análise: {{ processo.data_analise.strftime('%d/%m/%Y %H:%M') if processo.data_analise else '---' }}%0D%0AColaborador: {{ processo.colaborador.nome | urlencode }}%0D%0AObservações: {{ processo.observacoes or '---' | urlencode }}%0D%0A%0D%0AEm caso de dúvida, estamos à disposição.%0D%0A%0D%0AAtenciosamente,%0D%0AEquipe de Qualidade">
-                    📧 Desvio
+                     Desvio
                 </a>
             {% else %}
-                ✅ Conforme
+                 Conforme
             {% endif %}
         </td>
         <td>{{ processo.descricao }}</td>
         <td>{{ processo.observacoes or '---' }}</td>
-        <td>
-            {% if processo.imagem %}
-                <a href="{{ url_for('static', filename='uploads/' ~ processo.imagem) }}" target="_blank">Ver</a>
-            {% else %}
-                ---
-            {% endif %}
-        </td>
+       <td>
+{% if processo.imagens %}
+    <a href="{{ url_for('ver_imagens_processo', id=processo.id) }}" target="_blank">
+        Ver
+    </a>
+{% else %}
+    ---
+{% endif %}
+</td>
         <td>
             <a href="{{ url_for('gerar_pdf', id=processo.id) }}" target="_blank">📄 PDF</a>
         </td>

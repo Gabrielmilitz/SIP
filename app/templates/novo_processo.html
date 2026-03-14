@@ -1,113 +1,125 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 <link rel="stylesheet" href="{{ url_for('static', filename='css/novo_processo.css') }}">
 
 <h2>Registrar Novo Processo</h2>
 <form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
-    <div>
-        <label>{{ form.colaborador.label }}</label>
-        {{ form.colaborador() }}
-    </div>
-    <div>
-        <label>{{ form.status.label }}</label>
-        {{ form.status() }}
-    </div>
 
-    <div class="full">
-        <label>{{ form.descricao.label }}</label>
-        {{ form.descricao(rows=2) }}
-    </div>
+<div>
+    <label>{{ form.colaborador.label }}</label>
+    {{ form.colaborador() }}
+</div>
 
-    <div class="full">
-        <label>{{ form.observacoes.label }}</label>
-        {{ form.observacoes(rows=2) }}
-    </div>
+<div>
+    <label>{{ form.status.label }}</label>
+    {{ form.status() }}
+</div>
 
-    <div class="full">
-        <label>{{ form.imagem.label }}</label>
-        {{ form.imagem() }}
-    </div>
+<div class="full">
+    <label>{{ form.descricao.label }}</label>
+    {{ form.descricao(rows=2) }}
+</div>
 
-    <div class="subsection">Informações Detalhadas (para exportação)</div>
+<div class="full">
+    <label>{{ form.observacoes.label }}</label>
+    {{ form.observacoes(rows=2) }}
+</div>
 
-    <div>
-        <label>{{ form.coordenacao.label }}</label>
-        {{ form.coordenacao() }}
-    </div>
-    <div>
-        <label>{{ form.lideranca.label }}</label>
-        {{ form.lideranca() }}
-    </div>
+<div class="full">
+    <label>{{ form.imagem.label }}</label>
+    {{ form.imagem(class="form-control", multiple=True) }}
+</div>
 
-    <div>
-        <label>{{ form.data_inspecao.label }}</label>
-        {{ form.data_inspecao() }}
-    </div>
-    <div>
-        <label>{{ form.inspetor.label }}</label>
-        {{ form.inspetor() }}
-    </div>
+<div class="subsection">Informações Detalhadas (para exportação)</div>
 
-    <div>
-        <label>{{ form.cpf_cnpj.label }}</label>
-        {{ form.cpf_cnpj() }}
-    </div>
-    <div>
-        <label>{{ form.coop.label }}</label>
-        {{ form.coop() }}
-    </div>
+<div>
+    <label>{{ form.coordenacao.label }}</label>
+    {{ form.coordenacao() }}
+</div>
 
-    <div>
-        <label>{{ form.tipo.label }}</label>
-        {{ form.tipo() }}
-    </div>
-    <div>
-        <label>{{ form.data_execucao.label }}</label>
-        {{ form.data_execucao() }}
-    </div>
+<div>
+    <label>{{ form.lideranca.label }}</label>
+    {{ form.lideranca() }}
+</div>
 
-    <div>
-        <label>{{ form.interno_externo.label }}</label>
-        {{ form.interno_externo() }}
-    </div>
-    <div>
-        <label>{{ form.tipo_autorizacao.label }}</label>
-        {{ form.tipo_autorizacao() }}
-    </div>
+<div>
+    <label>{{ form.data_inspecao.label }}</label>
+    {{ form.data_inspecao() }}
+</div>
 
-    <div>
-        <label>{{ form.tipo_erro.label }}</label>
-        {{ form.tipo_erro() }}
-    </div>
-    <div>
-        <label>{{ form.gravidade.label }}</label>
-        {{ form.gravidade() }}
-    </div>
+<div>
+    <label>{{ form.inspetor.label }}</label>
+    {{ form.inspetor() }}
+</div>
 
-    <div>
-        <label>{{ form.desvio_atencao.label }}</label>
-        {{ form.desvio_atencao() }}
-    </div>
-    <div>
-        <label>{{ form.reversao.label }}</label>
-        {{ form.reversao() }}
-    </div>
+<div>
+    <label>{{ form.cpf_cnpj.label }}</label>
+    {{ form.cpf_cnpj() }}
+</div>
 
-    <div class="full">
-        <label>{{ form.fluxos.label }}</label>
-        {{ form.fluxos() }}
-    </div>
+<div>
+    <label>{{ form.coop.label }}</label>
+    {{ form.coop() }}
+</div>
 
-    <div class="full">
-        <label>{{ form.solicitante.label }}</label>
-        {{ form.solicitante() }}
-    </div>
+<div>
+    <label>{{ form.tipo.label }}</label>
+    {{ form.tipo() }}
+</div>
 
-    <div class="full">
-        {{ form.submit() }}
-    </div>
+<div>
+    <label>{{ form.data_execucao.label }}</label>
+    {{ form.data_execucao() }}
+</div>
+
+<div>
+    <label>{{ form.interno_externo.label }}</label>
+    {{ form.interno_externo() }}
+</div>
+
+<div>
+    <label>{{ form.tipo_autorizacao.label }}</label>
+    {{ form.tipo_autorizacao() }}
+</div>
+
+<div>
+    <label>{{ form.tipo_erro.label }}</label>
+    {{ form.tipo_erro() }}
+</div>
+
+<div>
+    <label>{{ form.gravidade.label }}</label>
+    {{ form.gravidade() }}
+</div>
+
+<div>
+    <label>{{ form.desvio_atencao.label }}</label>
+    {{ form.desvio_atencao() }}
+</div>
+
+<div>
+    <label>{{ form.reversao.label }}</label>
+    {{ form.reversao() }}
+</div>
+
+<div class="full">
+    <label>{{ form.fluxos.label }}</label>
+    {{ form.fluxos() }}
+</div>
+
+<div class="full">
+    <label>{{ form.solicitante.label }}</label>
+    {{ form.solicitante() }}
+</div>
+
+<div class="full">
+    {{ form.submit() }}
+</div>
+
+
 </form>
 {% endblock %}

@@ -15,12 +15,20 @@ class Colaborador(db.Model):
 class Processo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
-    data_analise = db.Column(db.DateTime, nullable=False) 
+    data_analise = db.Column(db.DateTime, nullable=False)
     descricao = db.Column(db.Text, nullable=False)
     status = db.Column(db.String(20), nullable=False)
     observacoes = db.Column(db.Text)
     imagem = db.Column(db.String(200))
+
     detalhes = db.relationship('DetalhesProcesso', backref='processo', uselist=False)
+
+    imagens = db.relationship(
+    'ImagemProcesso',
+    backref='processo',
+    lazy=True,
+    cascade="all, delete-orphan"
+)
 
 
 class DetalhesProcesso(db.Model):
@@ -44,6 +52,10 @@ class DetalhesProcesso(db.Model):
     fluxos = db.Column(db.String(255))
     solicitante = db.Column(db.String(120))
 
+class ImagemProcesso(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    processo_id = db.Column(db.Integer, db.ForeignKey('processo.id'), nullable=False)
+    nome_arquivo = db.Column(db.String(200), nullable=False)
 
 class SenhaUsuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -55,3 +67,5 @@ class SenhaUsuario(db.Model):
 
     def verificar_senha(self, senha):
         return check_password_hash(self.senha_hash, senha)
+    
+
