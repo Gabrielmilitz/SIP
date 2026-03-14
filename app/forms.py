@@ -159,6 +159,14 @@ class ProcessoForm(FlaskForm):
 class DeletarTodosForm(FlaskForm):
     submit = SubmitField('Deletar Todos os Registros')
 
+class DeletarPorColaboradorForm(FlaskForm):
+    colaborador = SelectField(
+        'Selecionar Colaborador',
+        coerce=int,
+        validators=[DataRequired()]
+    )
+    submit = SubmitField('Deletar Processos do Colaborador')
+
 
 class LoginForm(FlaskForm):
     email = StringField('E-mail', validators=[DataRequired(), Email()])

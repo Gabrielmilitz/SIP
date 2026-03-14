@@ -2,15 +2,36 @@
 
 {% block content %}
 
- <link rel="stylesheet" href="{{ url_for('static', filename='css/deletar_registro_estilo.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/deletar_registro.css') }}">
+
 <div class="container">
-    <h2 class="text-danger">⚠️ Deletar Todos os Registros</h2>
-    <p>Esta ação <strong>irá apagar permanentemente</strong> todos os processos registrados no sistema.</p>
+
+    <h2 class="text-danger">⚠️ Deletar Registros por Colaborador</h2>
+
+    <p>
+        Selecione um colaborador para remover todos os processos vinculados a ele.
+        Esta ação <strong>não pode ser desfeita</strong>.
+    </p>
 
     <form method="POST">
+
         {{ form.hidden_tag() }}
-        <button type="submit" class="btn btn-danger">Confirmar Exclusão Total</button>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+
+        <div class="form-group">
+            <label>Selecionar Colaborador</label>
+            {{ form.colaborador(class="form-control") }}
+        </div>
+
+        <br>
+
+        {{ form.submit(class="btn btn-danger") }}
+
+        <a href="{{ url_for('index') }}" class="btn btn-secondary">
+            Cancelar
+        </a>
+
     </form>
+
 </div>
+
 {% endblock %}

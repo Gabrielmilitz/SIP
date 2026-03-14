@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 
 
 from app import db
-from app.forms import ColaboradorForm, ProcessoForm, DeletarTodosForm, LoginForm
+from app.forms import ColaboradorForm, ProcessoForm, DeletarTodosForm, LoginForm, DeletarPorColaboradorForm
 from app.models import Colaborador, Processo, DetalhesProcesso, SenhaUsuario
 
 
@@ -224,13 +224,33 @@ def exportar_xlsx():
 
 @app.route('/deletar-registros', methods=['GET', 'POST'])
 def deletar_registros():
-    form = DeletarTodosForm()
+
+    form = DeletarPorColaboradorForm()
+
+    # carregar colaboradores no select
+    form.colaborador.choices = [(c.id, c.nome) for c in Colaborador.query.all()]
+
     if form.validate_on_submit():
-        db.session.query(DetalhesProcesso).delete()
-        db.session.query(Processo).delete()
+
+        colaborador_id = form.colaborador.data
+
+        processos = Processo.query.filter_by(colaborador_id=colaborador_id).all()
+
+        for processo in processos:
+
+            # deletar detalhes primeiro
+            if processo.detalhes:
+                db.session.delete(processo.detalhes)
+
+            # deletar processo
+            db.session.delete(processo)
+
         db.session.commit()
-        flash('Todos os registros de processo e detalhes foram apagados.', 'warning')
+
+        flash('Processos do colaborador foram removidos com sucesso.', 'warning')
+
         return redirect(url_for('index'))
+
     return render_template('deletar_registros.html', form=form)
 # PAINEL 
 
