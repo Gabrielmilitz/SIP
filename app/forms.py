@@ -14,7 +14,7 @@ class ProcessoForm(FlaskForm):
 
     colaborador = SelectField('Colaborador', coerce=int, validators=[DataRequired()])
 
-    descricao = TextAreaField('Descrição do Processo', validators=[Optional()])
+    descricao = TextAreaField('Descrição do erro', validators=[Optional()])
 
     status = SelectField(
         'Status',
@@ -25,7 +25,7 @@ class ProcessoForm(FlaskForm):
         validators=[DataRequired()]
     )
 
-    observacoes = TextAreaField('Observações')
+    observacoes = TextAreaField('Procedimento correto')
 
     imagem = FileField(
     'Imagens',
